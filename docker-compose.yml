@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  stock-price-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=stockprice
+
+  stock-price-app:
+    build:
+      context: ./
+    ports:
+      - 8080:8080
+    depends_on:
+      - stock-price-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://stock-price-db/stockprice
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
