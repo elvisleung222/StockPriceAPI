@@ -27,6 +27,12 @@ public class StockPriceController {
     @Autowired
     private StockService stockService;
 
+    @GetMapping(value = "/health")
+    public String health() {
+        return "Server is running......";
+    }
+
+
     @GetMapping(path = "/historical-prices")
     public ResponseEntity<List<PriceResponseDTO>> getHistoricalPrices(
             @RequestParam String symbols,
@@ -66,4 +72,5 @@ public class StockPriceController {
         System.out.println("Time collapsed: " + ((new Date()).getTime() - started.getTime()));
         return ResponseEntity.ok(priceResponseDTOList);
     }
+
 }
