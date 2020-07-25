@@ -7,6 +7,7 @@ import com.stockprice.entity.Stock;
 import com.stockprice.service.PriceService;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,15 +22,17 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/multi-threaded")
 public class StockPriceController {
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     @Autowired
     private PriceService priceService;
 
+    @Value("${eureka.instance.instanceId}")
+    private String instanceId;
+
     @GetMapping(value = "/health")
     public String health() {
-        return "Server is running......";
+        return "Instance \"" + instanceId + "\" is running......";
     }
 
 

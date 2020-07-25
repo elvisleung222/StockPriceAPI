@@ -20,6 +20,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/multi-threaded")
 public class StockPriceMultiThreadedController {
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
     @Autowired
