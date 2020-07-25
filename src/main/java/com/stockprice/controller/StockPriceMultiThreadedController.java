@@ -16,14 +16,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/multi-threaded")
-public class StockPriceController {
-    private final ExecutorService executor = Executors.newFixedThreadPool(4);
+public class StockPriceMultiThreadedController {
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
     @Autowired
     private PriceService priceService;
 
@@ -38,6 +36,7 @@ public class StockPriceController {
             @RequestParam String symbols,
             @RequestParam String from,
             @RequestParam String to) {
+        Date started = new Date();
         final List<String> symbolList = Arrays.stream(symbols.split(","))
                 .map(String::trim)
                 .map(String::toUpperCase)
@@ -51,26 +50,51 @@ public class StockPriceController {
         } catch (ParseException e) {
         }
 
+        CompletionService<StockPriceDTO> completionService =
+                new ExecutorCompletionService<>(executor);
         for (String symbol : symbolList) {
             Date finalFromDate = fromDate;
             Date finalToDate = toDate;
-            List<Price> prices = priceService.getHistoricalPrices(symbol, finalFromDate, finalToDate);
-            StockPriceDTO dto = StockPriceDTO.builder().symbol(symbol).historicalPrices(prices).build();
-            stockPriceDTOList.add(dto);
+            completionService.submit(() -> {
+                List<Price> prices = priceService.getHistoricalPrices(symbol, finalFromDate, finalToDate);
+                StockPriceDTO dto = StockPriceDTO.builder().symbol(symbol).historicalPrices(prices).build();
+                return dto;
+            });
         }
+
+        for (String symbol : symbolList) {
+            try {
+                StockPriceDTO resultDto = completionService.take().get();
+                stockPriceDTOList.add(resultDto);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Time collapsed: " + ((new Date()).getTime() - started.getTime()));
         return ResponseEntity.ok(stockPriceDTOList);
     }
 
     @PostMapping(path = "/historical-prices")
     public ResponseEntity<List<PriceSaveResultDTO>> saveHistoricalPrices(@RequestBody @Valid List<StockPriceDTO> inputs) {
         List<PriceSaveResultDTO> responseDTOS = new ArrayList<>();
+        CompletionService<PriceSaveResultDTO> completionService = new ExecutorCompletionService<>(executor);
         for (StockPriceDTO input : inputs) {
+            completionService.submit(() -> {
+                long count = priceService.saveHistoricalPrices(input.getSymbol().toUpperCase(), input.getHistoricalPrices());
+                PriceSaveResultDTO result = new PriceSaveResultDTO();
+                result.setSymbol(input.getSymbol().toUpperCase());
+                result.setSuccessCount(count);
+                return result;
+            });
+        }
 
-            long count = priceService.saveHistoricalPrices(input.getSymbol().toUpperCase(), input.getHistoricalPrices());
-            PriceSaveResultDTO result = new PriceSaveResultDTO();
-            result.setSymbol(input.getSymbol().toUpperCase());
-            result.setSuccessCount(count);
-            responseDTOS.add(result);
+        for (StockPriceDTO input : inputs) {
+            try {
+                PriceSaveResultDTO dto = completionService.take().get();
+                responseDTOS.add(dto);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
         }
         return ResponseEntity.ok(responseDTOS);
     }
@@ -80,14 +104,25 @@ public class StockPriceController {
         List<String> symbolList = Arrays.stream(symbols.split(",")).map(String::trim).map(String::toUpperCase).collect(Collectors.toList());
         List<Stock> result = new ArrayList<>();
 
+        CompletionService<Stock> completionService = new ExecutorCompletionService<>(executor);
+
         for (String symbol : symbolList) {
             try {
-                result.add(priceService.deleteHistoricalPrices(symbol));
+                completionService.submit(() -> priceService.deleteHistoricalPrices(symbol));
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
+        for (String symbol : symbolList) {
+            try {
+                Stock stock = completionService.take().get();
+                result.add(stock);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
         return ResponseEntity.ok(result);
     }
 
