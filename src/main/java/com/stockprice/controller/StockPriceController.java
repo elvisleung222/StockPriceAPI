@@ -28,6 +28,12 @@ public class StockPriceController {
     @Autowired
     private StockService stockService;
 
+    @GetMapping(value = "/health")
+    public String health() {
+        return "Server is running......";
+    }
+
+
     @GetMapping(path = "/historical-prices")
     public ResponseEntity<List<StockPriceDTO>> getHistoricalPrices(
             @RequestParam String symbols,
@@ -100,4 +106,5 @@ public class StockPriceController {
         }
         return ResponseEntity.ok(result);
     }
+
 }
