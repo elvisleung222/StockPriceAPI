@@ -7,5 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface PriceRepository extends JpaRepository<Price, Long> {
-    List<Price> findByStockIdAndDateBetween(long stockId, Date from, Date to);
+    List<Price> findByPriceIdStockIdAndPriceIdDateBetween(long stockId, Date from, Date to);
+
+    void deleteByPriceIdStockId(long stockId);
 }

@@ -10,17 +10,34 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    public Stock getStock(long id) {
+    protected Stock getStock(long id) {
         Stock stock = stockRepository.findById(id).get();
         if (stock == null)
             throw new RuntimeException("Can't find stock by id " + id);
         return stock;
     }
 
-    public Stock getStock(String symbol) {
+    protected Stock getStock(String symbol) {
         Stock stock = stockRepository.findBySymbol(symbol);
         if (stock == null)
             throw new RuntimeException("Can't find stock by symbol " + symbol);
+        return stock;
+    }
+
+    // TODO: transactionl
+    protected Stock getOrCreateStock(String symbol) {
+        try {
+            return getStock(symbol);
+        } catch (RuntimeException e) {
+            Stock stock = new Stock();
+            stock.setSymbol(symbol);
+            return stockRepository.save(stock);
+        }
+    }
+
+    // TODO: transactionl
+    protected Stock deleteStock(Stock stock) {
+        stockRepository.delete(stock);
         return stock;
     }
 }

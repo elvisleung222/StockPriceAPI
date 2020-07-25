@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class PriceResponseDTO {
+public class StockPriceDTO {
     private String symbol;
     private List<Price> historicalPrices;
 }
