@@ -32,8 +32,8 @@ public class StockPriceMultiThreadedController {
     }
 
 
-    @GetMapping(path = "/historical-prices")
-    public ResponseEntity<List<StockPriceDTO>> getHistoricalPrices(
+    @GetMapping(path = "/prices")
+    public ResponseEntity<List<StockPriceDTO>> getPrices(
             @RequestParam String symbols,
             @RequestParam String from,
             @RequestParam String to) {
@@ -75,8 +75,8 @@ public class StockPriceMultiThreadedController {
         return ResponseEntity.ok(stockPriceDTOList);
     }
 
-    @PostMapping(path = "/historical-prices")
-    public ResponseEntity<List<PriceSaveResultDTO>> saveHistoricalPrices(@RequestBody @Valid List<StockPriceDTO> inputs) {
+    @PostMapping(path = "/prices")
+    public ResponseEntity<List<PriceSaveResultDTO>> savePrices(@RequestBody @Valid List<StockPriceDTO> inputs) {
         List<PriceSaveResultDTO> responseDTOS = new ArrayList<>();
         CompletionService<PriceSaveResultDTO> completionService = new ExecutorCompletionService<>(executor);
         for (StockPriceDTO input : inputs) {

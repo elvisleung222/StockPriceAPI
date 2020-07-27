@@ -36,8 +36,8 @@ public class StockPriceController {
     }
 
 
-    @GetMapping(path = "/historical-prices")
-    public ResponseEntity<List<StockPriceDTO>> getHistoricalPrices(
+    @GetMapping(path = "/prices")
+    public ResponseEntity<List<StockPriceDTO>> getPrices(
             @RequestParam String symbols,
             @RequestParam String from,
             @RequestParam String to) {
@@ -64,8 +64,8 @@ public class StockPriceController {
         return ResponseEntity.ok(stockPriceDTOList);
     }
 
-    @PostMapping(path = "/historical-prices")
-    public ResponseEntity<List<PriceSaveResultDTO>> saveHistoricalPrices(@RequestBody @Valid List<StockPriceDTO> inputs) {
+    @PostMapping(path = "/prices")
+    public ResponseEntity<List<PriceSaveResultDTO>> savePrices(@RequestBody @Valid List<StockPriceDTO> inputs) {
         List<PriceSaveResultDTO> responseDTOS = new ArrayList<>();
         for (StockPriceDTO input : inputs) {
 
