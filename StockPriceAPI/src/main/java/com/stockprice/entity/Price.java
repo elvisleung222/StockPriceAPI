@@ -1,6 +1,7 @@
 package com.stockprice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Indexed;
@@ -15,15 +16,26 @@ import java.util.Date;
 @Setter
 @Entity
 @Indexed
-@Table(indexes = {@Index(columnList = "stock_id,date")}) // TODO: evaluate whether need it or not, given PK exists
+@Table(indexes = {@Index(columnList = "stock_id,date")})
 public class Price {
+    @ApiModelProperty(value = "Composite primary key of a price object")
     @JsonIgnore
     @EmbeddedId
     final PriceId priceId = new PriceId();
+
+    @ApiModelProperty(value = "The opening price of the day")
     private double open;
+
+    @ApiModelProperty(value = "The highest price of the day")
     private double high;
+
+    @ApiModelProperty(value = "The lowest price of the day")
     private double low;
+
+    @ApiModelProperty(value = "The closing price of the day")
     private double close;
+
+    @ApiModelProperty(value = "The trading volume of the day")
     private long volume;
 
     public Date getDate() {

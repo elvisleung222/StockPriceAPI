@@ -14,32 +14,44 @@ import java.util.List;
 @Service
 public class PriceService {
     @Autowired
-    PriceRepository priceRepository;
+    private PriceRepository priceRepository;
 
     @Autowired
     StockService stockService;
 
-    public List<Price> getHistoricalPrices(String symbol, Date from, Date to) {
+    /**
+     * Retrieve prices of a stock
+     *
+     * @param symbol
+     * @param from
+     * @param to
+     * @return
+     */
+    public List<Price> getPrices(String symbol, Date from, Date to) {
         Stock stock = stockService.getStock(symbol);
         List<Price> prices = priceRepository.findByPriceIdStockIdAndPriceIdDateBetween(stock.getId(), from, to);
         return prices;
     }
 
-    // TODO: java doc
-    // TODO: transactionl
-    public long saveHistoricalPrices(String symbol, List<Price> prices) {
+    /**
+     * Insert / update prices for a stock
+     *
+     * @param symbol
+     * @param prices
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public long savePrices(String symbol, List<Price> prices) {
         Stock stock = stockService.getOrCreateStock(symbol);
 
         for (Price price : prices) {
-
             price.getPriceId().setStock(stock);
         }
 
         try {
-            // TODO: explain why go for atomic
+            /** Atomic operation **/
             priceRepository.saveAll(prices);
             return prices.size();
-
         } catch (Exception e) {
             return 0;
         }
@@ -52,7 +64,7 @@ public class PriceService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public Stock deleteHistoricalPrices(String symbol) {
+    public Stock deletePrices(String symbol) {
         Stock stock = stockService.getStock(symbol);
         priceRepository.deleteByPriceIdStockId(stock.getId());
         return stockService.deleteStock(stock);

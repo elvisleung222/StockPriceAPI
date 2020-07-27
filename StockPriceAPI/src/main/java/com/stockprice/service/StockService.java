@@ -4,19 +4,20 @@ import com.stockprice.entity.Stock;
 import com.stockprice.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    protected Stock getStock(long id) {
-        Stock stock = stockRepository.findById(id).get();
-        if (stock == null)
-            throw new RuntimeException("Can't find stock by id " + id);
-        return stock;
-    }
-
+    /**
+     * Retrieve a stock by its symbol
+     *
+     * @param symbol
+     * @return
+     */
     protected Stock getStock(String symbol) {
         Stock stock = stockRepository.findBySymbol(symbol);
         if (stock == null)
@@ -24,7 +25,13 @@ public class StockService {
         return stock;
     }
 
-    // TODO: transactionl
+    /**
+     * Retrieve a stock by its symbol. If does not exist, then create a new stock
+     *
+     * @param symbol
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
     protected Stock getOrCreateStock(String symbol) {
         try {
             return getStock(symbol);
@@ -35,7 +42,13 @@ public class StockService {
         }
     }
 
-    // TODO: transactionl
+    /**
+     * Delete a stock
+     *
+     * @param stock
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
     protected Stock deleteStock(Stock stock) {
         stockRepository.delete(stock);
         return stock;
