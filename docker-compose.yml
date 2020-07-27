@@ -1,0 +1,49 @@
+version: "3.3"
+services:
+  stockprice-eureka-server:
+    image: elvisleung222/stockprice-eureka-server:initial
+    ports:
+      - "8761:8761"
+  stockprice-eureka-feign-client:
+    image: elvisleung222/stockprice-eureka-feign-client:initial
+    ports:
+      - "8000:8000"
+    links:
+      - stockprice-eureka-server
+    environment:
+      SERVER_PORT: 8000
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://stockprice-eureka-server:8761/eureka
+  stock-price-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=stockprice
+  stock-price-app-8001:
+    image: elvisleung222/stockprice-api:initial
+    ports:
+      - 8001:8001
+    depends_on:
+      - stock-price-db
+    links:
+      - stockprice-eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://stockprice-eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://stock-price-db/stockprice
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SERVER_PORT: 8001
+  stock-price-app-8002:
+    image: elvisleung222/stockprice-api:initial
+    ports:
+      - 8002:8002
+    depends_on:
+      - stock-price-db
+    links: 
+      - stockprice-eureka-server
+    environment:
+      SPRING_JPA_HIBERNATE_DDL-AUTO: none
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://stockprice-eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://stock-price-db/stockprice
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SERVER_PORT: 8002
