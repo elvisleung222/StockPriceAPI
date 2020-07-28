@@ -82,7 +82,7 @@ for (String symbol : symbolList) {
     });
 }
 
-// Collect result from threads until the longest one finished
+// Collect result from threads
 for (String symbol : symbolList) {
   StockPriceDTO resultDto = completionService.take().get();
   stockPriceDTOList.add(resultDto);
