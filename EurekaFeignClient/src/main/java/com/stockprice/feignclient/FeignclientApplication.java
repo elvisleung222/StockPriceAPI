@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Load balancing endpoints to stock prices API
+ */
 @SpringBootApplication
 @EnableFeignClients
 @RestController
@@ -45,28 +48,5 @@ public class FeignclientApplication {
     @DeleteMapping(path = "/stocks")
     public ResponseEntity<List<Stock>> deleteStock(@RequestParam String symbols) {
         return stockPriceAPI.deleteStock(symbols);
-    }
-
-    @GetMapping(path = "/multi-threaded/health")
-    public String health_m() {
-        return stockPriceAPI.health();
-    }
-
-    @GetMapping(path = "/multi-threaded/prices")
-    public ResponseEntity<List<StockPriceDTO>> getPrices_m(
-            @RequestParam String symbols,
-            @RequestParam String from,
-            @RequestParam String to) {
-        return stockPriceAPI.getPrices_m(symbols, from, to);
-    }
-
-    @PostMapping(path = "/multi-threaded/prices")
-    public ResponseEntity<List<PriceSaveResultDTO>> savePrices_m(@RequestBody @Valid List<StockPriceDTO> inputs) {
-        return stockPriceAPI.savePrices_m(inputs);
-    }
-
-    @DeleteMapping(path = "/multi-threaded/stocks")
-    public ResponseEntity<List<Stock>> deleteStock_m(@RequestParam String symbols) {
-        return stockPriceAPI.deleteStock_m(symbols);
     }
 }

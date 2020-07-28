@@ -6,9 +6,12 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Mapping class of Stock Price API
+ */
 @Getter
 @Setter
 public class StockPriceDTO {
     private String symbol;
-    private List<Price> historicalPrices;
+    private List<Price> prices;
 }

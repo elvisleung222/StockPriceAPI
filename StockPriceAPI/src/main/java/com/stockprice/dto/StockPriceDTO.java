@@ -12,5 +12,5 @@ import java.util.List;
 @Setter
 public class StockPriceDTO {
     private String symbol;
-    private List<Price> historicalPrices;
+    private List<Price> prices;
 }

@@ -1,13 +1,18 @@
 package com.stockprice.feignclient.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * Mapping class of Stock Price API
+ */
 @Getter
 @Setter
 public class Price {
+    @JsonIgnore
     private PriceId priceId = new PriceId();
     private double open;
     private double high;

@@ -17,7 +17,7 @@ public class PriceService {
     private PriceRepository priceRepository;
 
     @Autowired
-    StockService stockService;
+    private StockService stockService;
 
     /**
      * Retrieve prices of a stock
@@ -27,8 +27,8 @@ public class PriceService {
      * @param to
      * @return
      */
-    public List<Price> getPrices(String symbol, Date from, Date to) {
-        Stock stock = stockService.getStock(symbol);
+    public List<Price> getPrices(final String symbol, final Date from, final Date to) {
+        final Stock stock = stockService.getStock(symbol);
         List<Price> prices = priceRepository.findByPriceIdStockIdAndPriceIdDateBetween(stock.getId(), from, to);
         return prices;
     }
@@ -41,8 +41,8 @@ public class PriceService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public long savePrices(String symbol, List<Price> prices) {
-        Stock stock = stockService.getOrCreateStock(symbol);
+    public long savePrices(final String symbol, final List<Price> prices) {
+        final Stock stock = stockService.getOrCreateStock(symbol);
 
         for (Price price : prices) {
             price.getPriceId().setStock(stock);
@@ -64,8 +64,8 @@ public class PriceService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public Stock deletePrices(String symbol) {
-        Stock stock = stockService.getStock(symbol);
+    public Stock deletePrices(final String symbol) {
+        final Stock stock = stockService.getStock(symbol);
         priceRepository.deleteByPriceIdStockId(stock.getId());
         return stockService.deleteStock(stock);
     }

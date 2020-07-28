@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Mapping endpoints to stock price APIs
+ */
 @FeignClient("stock-price-service")
 public interface StockPriceAPI {
-    /**
-     * Endpoints from normal (single-threaded) controller
-     */
     @RequestMapping(method = RequestMethod.GET, value = "/health")
     String health();
 
@@ -29,20 +29,4 @@ public interface StockPriceAPI {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/stocks")
     ResponseEntity<List<Stock>> deleteStock(@RequestParam String symbols);
-
-
-    /**
-     * Endpoints from multi-threaded controller
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/multi-threaded/health")
-    String health_m();
-
-    @RequestMapping(method = RequestMethod.GET, value = "/multi-threaded/prices")
-    ResponseEntity<List<StockPriceDTO>> getPrices_m(@RequestParam String symbols, @RequestParam String from, @RequestParam String to);
-
-    @RequestMapping(method = RequestMethod.POST, value = "/multi-threaded/prices")
-    ResponseEntity<List<PriceSaveResultDTO>> savePrices_m(@RequestBody @Valid List<StockPriceDTO> inputs);
-
-    @RequestMapping(method = RequestMethod.DELETE, value = "/multi-threaded/stocks")
-    ResponseEntity<List<Stock>> deleteStock_m(@RequestParam String symbols);
 }

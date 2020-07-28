@@ -18,8 +18,8 @@ public class StockService {
      * @param symbol
      * @return
      */
-    protected Stock getStock(String symbol) {
-        Stock stock = stockRepository.findBySymbol(symbol);
+    protected Stock getStock(final String symbol) {
+        final Stock stock = stockRepository.findBySymbol(symbol);
         if (stock == null)
             throw new RuntimeException("Can't find stock by symbol " + symbol);
         return stock;
@@ -32,7 +32,7 @@ public class StockService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    protected Stock getOrCreateStock(String symbol) {
+    protected Stock getOrCreateStock(final String symbol) {
         try {
             return getStock(symbol);
         } catch (RuntimeException e) {
@@ -49,7 +49,7 @@ public class StockService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    protected Stock deleteStock(Stock stock) {
+    protected Stock deleteStock(final Stock stock) {
         stockRepository.delete(stock);
         return stock;
     }

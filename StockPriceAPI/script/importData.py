@@ -2,7 +2,7 @@ import requests
 import yfinance as yf
 from datetime import datetime
 
-stock_price_api_base = 'http://localhost:8001'
+stock_price_api_base = 'http://localhost:8000'
 historical_price_endpoint = stock_price_api_base + '/prices'
 stock_endpoint = stock_price_api_base + '/stocks'
 
@@ -28,18 +28,18 @@ payload = []
 for symbol in symbols:
     data = {
         'symbol': symbol,
-        'historicalPrices': []
+        'prices': []
     }
     ticker = yf.Ticker(symbol)
     # 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
     history = ticker.history(period='5d')
     for row in history.iterrows():
-        data['historicalPrices'].append(to_StockPriceDTO(row))
+        data['prices'].append(to_StockPriceDTO(row))
     payload.append(data)
 
 response = requests.post(historical_price_endpoint, json=payload)
 print('Added - ' + response.__str__())
+print('Time taken : ' + str(datetime.now() - started))
 # response = requests.delete(stock_endpoint + "?symbols=" + ','.join(symbols))
 # print('Deleted - ' + ','.join(symbols) + ': ' + response.__str__())
-
-print('Total time taken : ' + str(datetime.now() - started))
+print('Time taken : ' + str(datetime.now() - started))
