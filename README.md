@@ -89,6 +89,7 @@ for (String symbol : symbolList) {
 ```
 - Please refer to `/StockPriceAPI/src/main/java/com/stockprice/controller/StockPriceController.java`
 ## Dockerization
+- Three applications are dockerized
 - Dockerfile is located in each project directory: `./StockPriceAPI/`, `./EurekaFeignClient/` and `./EurekaServer/`
 - docker-compose is located in root directory: `./`
 - Images of all these three applications are published to Docker hub
