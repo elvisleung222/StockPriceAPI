@@ -50,6 +50,7 @@ python StockPriceAPI/script/importData.py
 # OR
 python3 StockPriceAPI/script/importData.py
 ```
+**Note: If you receive 500 response, please check if all instances (docker containers) are connected to the Eureka server. Otherwise, you might need to wait a couple more minutes for re-sync.**
 
 # Highlights
 ## Stock Price API
@@ -94,4 +95,7 @@ for (String symbol : symbolList) {
   - https://hub.docker.com/r/elvisleung222/stockprice-api/tags
   - https://hub.docker.com/r/elvisleung222/stockprice-eureka-feign-client/tags
   - https://hub.docker.com/r/elvisleung222/stockprice-eureka-server/tags
+- Images are pulled and used in the `./docker-compose.yml`
 ## Eureka Load Balancing
+- Eureka Server (./EurekaServer/) serves as a discovry registry for service.
+- Eureka Discovery Client (./EurekaFeignClient/) serves as a load balancer to route requests to different instances.
