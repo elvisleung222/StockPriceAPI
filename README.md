@@ -50,7 +50,7 @@ python StockPriceAPI/script/importData.py
 # OR
 python3 StockPriceAPI/script/importData.py
 ```
-**Note: If you receive 500 response, please check if all instances (docker containers) are connected to the Eureka server. Otherwise, you might need to wait a couple more minutes for re-sync.**
+**Note: If you receive 500 response, please check if all instances (docker containers) are connected to the Eureka server. Otherwise, you might need to wait a couple more minutes for re-sync and try again.**
 
 # Highlights
 ## Stock Price API
