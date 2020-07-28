@@ -55,9 +55,10 @@ python3 StockPriceAPI/script/importData.py
 # Highlights
 ## Stock Price API
 - Project path: `./StockPriceAPI/`
-- Post request: post/update multiple symbols and their corresponding historical price into database
-- Get request: query historical price by symbols and time range
-- Delete request: delete symbol and its corresponding data by symbols
+- Functionalities
+    - Post request: post/update multiple symbols and their corresponding historical price into database
+    - Get request: query historical price by symbols and time range
+    - Delete request: delete symbol and its corresponding data by symbols
 - Sample GET request: `http://localhost:8000/prices?symbols=AAPL, NIO, TSLA&from=2020-01-01&to=2020-08-01`
 - Please refer to the Swagger for API usage in detail
 ## Swagger
