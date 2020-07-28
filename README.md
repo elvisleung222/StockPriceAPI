@@ -30,7 +30,7 @@ Instances currently registered with Eureka
 
 (_You will find three services are registered in Eureka discovery registry. In this setup, two stock-price-service instances are up for load balancing._)
 
-6. Test the Eureka load balancing endpoint: http://localhost:8000/health/. 
+6. Test the Eureka load balancing endpoint: http://localhost:8000/health/
 
 Try to call this endpoint mutiple times. Then, you will see messages from TWO instances randomly with port numbers (8001 / 8002).
 ```
@@ -50,3 +50,48 @@ python StockPriceAPI/script/importData.py
 # OR
 python3 StockPriceAPI/script/importData.py
 ```
+
+# Highlights
+## Stock Price API
+- Project path: `./StockPriceAPI/`
+- Post request: post/update multiple symbols and their corresponding historical price into database
+- Get request: query historical price by symbols and time range
+- Delete request: delete symbol and its corresponding data by symbols
+- Sample GET request: `http://localhost:8000/prices?symbols=AAPL, NIO, TSLA&from=2020-01-01&to=2020-08-01`
+- Please refer to the Swagger for API usage in detail
+## Swagger
+- URL: http://localhost:8001/swagger-ui.html
+## Multi-threaded Part
+- *ExecutorService* is used with a fixed thread pool for execution
+```java
+ExecutorService executor = Executors.newFixedThreadPool(NUM_OF_THREADS)
+```
+- *ExecutorCompletionService* acts like a execution queue to handle tasks in parallel and receive deliverables from all threads.
+```java
+final List<StockPriceDTO> stockPriceDTOList = new ArrayList<>();
+final CompletionService<StockPriceDTO> completionService = new ExecutorCompletionService<>(executor);
+
+// Split tasks and handle in different threads
+for (String symbol : symbolList) {
+    completionService.submit(() -> {
+        List<Price> prices = priceService.getPrices(symbol, from, to);
+        StockPriceDTO dto = StockPriceDTO.builder().symbol(symbol).prices(prices).build();
+        return dto;
+    });
+}
+
+// Collect result from threads until the longest one finished
+for (String symbol : symbolList) {
+  StockPriceDTO resultDto = completionService.take().get();
+  stockPriceDTOList.add(resultDto);
+}
+```
+- Please refer to `/StockPriceAPI/src/main/java/com/stockprice/controller/StockPriceController.java`
+## Dockerization
+- Dockerfile is located in each project directory: `./StockPriceAPI/`, `./EurekaFeignClient/` and `./EurekaServer/`
+- docker-compose is located in root directory: `./`
+- Images of all these three applications are published to Docker hub
+  - https://hub.docker.com/r/elvisleung222/stockprice-api/tags
+  - https://hub.docker.com/r/elvisleung222/stockprice-eureka-feign-client/tags
+  - https://hub.docker.com/r/elvisleung222/stockprice-eureka-server/tags
+## Eureka Load Balancing
